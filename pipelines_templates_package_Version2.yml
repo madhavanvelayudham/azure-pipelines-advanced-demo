@@ -1,0 +1,36 @@
+parameters:
+  - name: dependsOn
+    type: string
+  - name: containerRegistry
+    type: string
+  - name: acrServiceConnection
+    type: string
+  - name: imageName
+    type: string
+  - name: imageTag
+    type: string
+
+stages:
+  - stage: Package
+    displayName: 'Containerize & Push'
+    dependsOn: ${{ parameters.dependsOn }}
+    jobs:
+      - job: docker_build_push
+        displayName: 'Build Docker image and push to ACR'
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - download: current
+            artifact: source
+            displayName: 'Download source artifact'
+
+          - task: Docker@2
+            displayName: 'Build and push image to ACR'
+            inputs:
+              command: buildAndPush
+              containerRegistry: ${{ parameters.acrServiceConnection }}
+              repository: '${{ parameters.containerRegistry }}/${{ parameters.imageName }}'
+              Dockerfile: 'Dockerfile'
+              tags: |
+                ${{ parameters.imageTag }}
+                latest

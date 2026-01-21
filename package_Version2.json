@@ -1,0 +1,23 @@
+{
+  "name": "azure-pipelines-advanced-demo",
+  "version": "1.0.0",
+  "description": "Advanced demo repo for Azure DevOps multi-stage pipelines (Node, Docker, ACR, App Service)",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "lint": "eslint src",
+    "test": "jest --ci --reporters=default --runInBand --outputFile=test-results.json",
+    "test:junit": "jest --ci --reporters=jest-junit --coverage",
+    "prepare": ""
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.0.0",
+    "jest": "^29.0.0",
+    "supertest": "^6.0.0",
+    "jest-junit": "^13.0.0",
+    "cross-env": "^7.0.0"
+  }
+}
