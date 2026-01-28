@@ -1,3 +1,10 @@
+resources:
+  repositories:
+    - repository: MYRavenRepo
+      type: git
+      name: Azure Pipeline Demo
+      ref: main
+
 trigger:
 - main
 
