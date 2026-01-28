@@ -9,7 +9,6 @@ stages:
   displayName: 'Build Stage'
   jobs:
   - job: BuildJob
-    displayName: 'Build Job'
     steps:
     - task: Maven@3
       displayName: 'Maven Build'
@@ -23,7 +22,6 @@ stages:
   dependsOn: Build
   jobs:
   - job: TestJob
-    displayName: 'Test Job'
     steps:
     - task: Maven@3
       displayName: 'Run Regression Tests'
@@ -35,4 +33,3 @@ stages:
       displayName: 'Publish Test Results'
       inputs:
         testResultsFiles: '**/surefire-reports/TEST-*.xml'
-        testRunTitle: 'Regression Test Results'
