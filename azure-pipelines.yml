@@ -1,3 +1,4 @@
+# ================= RESOURCES =================
 resources:
   repositories:
     - repository: MYRavenRepo
@@ -5,12 +6,15 @@ resources:
       name: Azure Pipeline Demo
       ref: main
 
+# ================= TRIGGER =================
 trigger:
 - main
 
+# ================= AGENT =================
 pool:
   vmImage: 'ubuntu-latest'
 
+# ================= STAGES =================
 stages:
 
 # ================= BUILD STAGE =================
@@ -29,6 +33,7 @@ stages:
         goals: 'clean package'
         jdkVersionOption: '1.11'
 
+    # Publish build artifacts
     - publish: target
       artifact: drop
 
@@ -53,12 +58,14 @@ stages:
       displayName: 'Publish Test Results'
       inputs:
         testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        testRunTitle: 'Maven Test Results'
 
 
 # ================= DEPLOY TO STAGING =================
 - stage: Deploy_Staging
   displayName: 'Deploy to Staging'
   dependsOn: Test
+  condition: succeeded()
   jobs:
   - deployment: StagingDeploy
     displayName: 'Staging Deployment'
@@ -71,8 +78,12 @@ stages:
             artifact: drop
 
           - script: |
-              echo "Deploying application to STAGING environment"
-              ls $(System.DefaultWorkingDirectory)/drop
+              echo "===================================="
+              echo "Deploying application to STAGING"
+              echo "Artifact location:"
+              ls $(Pipeline.Workspace)/drop
+              echo "STAGING deployment completed"
+              echo "===================================="
             displayName: 'Staging Deployment Script'
 
 
@@ -80,6 +91,7 @@ stages:
 - stage: Deploy_Production
   displayName: 'Deploy to Production'
   dependsOn: Deploy_Staging
+  condition: succeeded()
   jobs:
   - deployment: ProductionDeploy
     displayName: 'Production Deployment'
@@ -92,6 +104,10 @@ stages:
             artifact: drop
 
           - script: |
-              echo "Deploying application to PRODUCTION environment"
-              ls $(System.DefaultWorkingDirectory)/drop
+              echo "===================================="
+              echo "Deploying application to PRODUCTION"
+              echo "Artifact location:"
+              ls $(Pipeline.Workspace)/drop
+              echo "PRODUCTION deployment completed"
+              echo "===================================="
             displayName: 'Production Deployment Script'
