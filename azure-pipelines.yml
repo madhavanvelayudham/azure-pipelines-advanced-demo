@@ -13,11 +13,12 @@ pool:
 
 stages:
 
-# ---------------- BUILD ----------------
+# ================= BUILD STAGE =================
 - stage: Build
   displayName: 'Build Stage'
   jobs:
   - job: BuildJob
+    displayName: 'Build Job'
     steps:
     - checkout: MYRavenRepo
 
@@ -32,12 +33,13 @@ stages:
       artifact: drop
 
 
-# ---------------- TEST ----------------
+# ================= TEST STAGE =================
 - stage: Test
   displayName: 'Test Stage'
   dependsOn: Build
   jobs:
   - job: TestJob
+    displayName: 'Test Job'
     steps:
     - checkout: MYRavenRepo
 
@@ -48,11 +50,12 @@ stages:
         goals: 'test'
 
     - task: PublishTestResults@2
+      displayName: 'Publish Test Results'
       inputs:
         testResultsFiles: '**/surefire-reports/TEST-*.xml'
 
 
-# ---------------- DEPLOY TO STAGING ----------------
+# ================= DEPLOY TO STAGING =================
 - stage: Deploy_Staging
   displayName: 'Deploy to Staging'
   dependsOn: Test
@@ -69,11 +72,11 @@ stages:
 
           - script: |
               echo "Deploying application to STAGING environment"
-              ls $(Pipeline.Workspace)/drop
+              ls $(System.DefaultWorkingDirectory)/drop
             displayName: 'Staging Deployment Script'
 
 
-# ---------------- DEPLOY TO PRODUCTION ----------------
+# ================= DEPLOY TO PRODUCTION =================
 - stage: Deploy_Production
   displayName: 'Deploy to Production'
   dependsOn: Deploy_Staging
@@ -90,5 +93,5 @@ stages:
 
           - script: |
               echo "Deploying application to PRODUCTION environment"
-              ls $(Pipeline.Workspace)/drop
+              ls $(System.DefaultWorkingDirectory)/drop
             displayName: 'Production Deployment Script'
